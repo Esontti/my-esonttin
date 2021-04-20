@@ -1,0 +1,26 @@
+//判断haystack字符串是否有needle字符串，若有则返回needle字符串首字符的位置；若无则返回-1
+//边界：needle为空，needle比haysta长，2020-11-10
+class Solution {
+public:
+    int strStr(string haystack, string needle) {
+        int l1=haystack.length();
+        int l2=needle.length();
+        int i=0,j=0;
+        if(needle.empty())
+            return 0;
+        while(haystack[i] !='\0' && needle[j] != '\0'){
+            if(haystack[i]==needle[j]){
+                i++;
+                j++;
+            }
+            else{
+                i=i-j+1;
+                j=0;
+            }
+            if(needle[j]=='\0')
+                return i-j;
+        }
+        return -1;
+        
+    }
+};

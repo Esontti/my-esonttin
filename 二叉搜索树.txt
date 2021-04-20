@@ -1,0 +1,65 @@
+Leetcode108 & 109
+1、什么是二叉搜索树（又名，二叉排列树，二叉查找树）
+	1）若左子树不空，则左子树上所有节点的值均小于它的根节点的值
+	2）若右子树不空，则右子树上所有节点的值均大于它的根节点的值
+	3）左、右子树也分别为二叉排序树
+	4）没有键值相等的节点
+本文本展示了	有序数组求最小高度二叉搜索树
+			有序链表求最小高度二叉搜索树
+2、求最小高度搜索树，给定有序数组
+	使用分治法
+	1) 根据有序数组以及搜索树的特点，将其进行二分，将第一个mid作为根结点小于中心的点给左子树，大于中心的点给右子树
+	2）进行递归即可～
+class Solution {
+public:
+    TreeNode* dfs(vector<int>& nums,int l,int r){
+        //hight 是中心数组的首项，low是末项
+        if(l>r) {
+              return nullptr;
+        }//首项大于末项，如果数组不存在
+          
+        int mid =l+(r-l)/2;
+
+        TreeNode* ans=new TreeNode(nums[mid]);
+        ans->left = dfs(nums,l,mid-1);
+        ans->right = dfs(nums,mid+1,r);
+        return ans;
+    } 
+    TreeNode* sortedArrayToBST(vector<int>& nums) {
+        return dfs(nums,0,nums.size()-1);
+    }
+    
+};
+
+3、有序链表转换为二叉搜索树
+	1) 找中点 找出链表中位数节点的方法多种多样，其中较为简单的一种是「快慢指针法」。初始时，快指针 \textit{fast}fast 和慢指针 \textit{slow}slow 均指向链表的左端点 \textit{left}left。我们将快指针 \textit{fast}fast 向右移动两次的同时，将慢指针 \textit{slow}slow 向右移动一次，直到快指针到达边界（即快指针到达右端点或快指针的下一个节点是右端点）。此时，慢指针对应的元素就是中位数。
+	2）在写代码的时候，得注意链表和二叉树的类型
+
+class Solution {
+public:
+    ListNode* get_mid(ListNode* left,ListNode* right){
+        ListNode* slow=left;
+        ListNode* fast=left;
+        while(fast !=right && fast->next !=right){
+            fast=fast->next->next;
+            slow=slow->next;
+        }
+        return slow;//因为需要返回的事一个指针结点，函数类型应该是listNode*
+    }//通过快慢指针找到中点
+    TreeNode* build_tree(ListNode* left,ListNode* right){
+        //这个函数是用来建立二叉树的，写的时候注意类型
+        if(left==right)//这是一个左闭右开的数组，即right是空指针，不能作为结点，所以当left=right是就应该结束了，而不是像数组那样left》right
+            return nullptr;
+        ListNode* mid=get_mid(left,right);//因为返回的是结点，所以mid的类型要更改，且不用new
+        TreeNode* ans=new TreeNode(mid->val);//建树，写下一个树结点，val是这里定义的data
+        ans->left= build_tree(left,mid);
+        ans->right = build_tree(mid->next,right);
+        return ans;
+    }
+    TreeNode* sortedListToBST(ListNode* head) {
+        return build_tree(head,nullptr);
+    }
+
+
+1⃣️关于这个还有一个优化：利用分治法和中序遍历，但我还未理解
+2⃣️关于 求左子树和和右子树时值得注意是：链表得断开，这里使用的是 mid和mid->next；		另一个方法是使用一个空指针指向中点的前驱，利用slow_pre->next=nullptr;将链表断为left->next; & mid->next （此时递归参数就是链表，整个代码只需一个函数啦）

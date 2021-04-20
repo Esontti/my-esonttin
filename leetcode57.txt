@@ -1,0 +1,28 @@
+   //插入区间。 2020-11-13
+
+class Solution {
+public:
+ vector<vector<int>> insert(vector<vector<int>>& intervals, vector<int>& newInterval) {
+        vector<vector<int>> ans;
+        int i=0;
+        //如果旧区间的右端点小于新区间的左端点
+        while(i<intervals.size() && intervals[i][1]> newInterval[0]){
+            ans.push_back(intervals[i]);
+            i++;
+        }
+        //经过上面的循环，已经将所有新区间的左边不重叠的部分放进答案里
+        //如果旧区间的左端点小于或等于右端点，则需要合并
+        while(i<intervals.size() && intervals[i][0] <= newInterval[1]){
+            newInterval[0] = min(intervals[i][0],newInterval[0]);
+            newInterval[1] = max(intervals[i][1],newInterval[1]);
+            i++;
+        }
+        ans.push_back(newInterval);
+        //上面的循环结束后，将所有右边的不重叠的区间放进答案
+        while(i<intervals.size()){
+            ans.push_back(intervals[i]);
+            i++;
+        }
+        return ans;
+    }
+};
